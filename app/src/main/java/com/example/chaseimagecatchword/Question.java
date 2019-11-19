@@ -29,7 +29,6 @@ public class Question extends AppCompatActivity {
     int numberOfQuestion = 0;
     listQuestion questions = new listQuestion();
     ArrayList<itemQuestion> list = questions.listQuestion;
-    int count;
     int score = 0;
     int sttBtn;
     String img, anwser;
@@ -98,7 +97,7 @@ public class Question extends AppCompatActivity {
             for (int j = 0; j < arrAnwser[i].length(); j++) {
                 final int temp = sttBtn;
                 buttons[temp] = new Button(this);
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(80, 70);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(110, 110);
                 buttons[temp].setLayoutParams(params);
                 buttons[temp].setTextColor(Color.parseColor("#ffffff"));
                 buttons[temp].setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_anwser));
@@ -128,7 +127,6 @@ public class Question extends AppCompatActivity {
     }
 
     public void showAnwserSuggest() {
-        count = 0;
         char[] chars1 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
         StringBuilder sb1 = new StringBuilder();
         Random random1 = new Random();
@@ -157,7 +155,7 @@ public class Question extends AppCompatActivity {
 
             final int m = j;
             buttonsSuggest[j] = new Button(this);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(80, 70);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(110, 110);
             buttonsSuggest[j].setLayoutParams(params);
             buttonsSuggest[j].setText(String.valueOf(chars.get(j)));
             buttonsSuggest[j].setTextColor(Color.parseColor("#ffffff"));
@@ -166,11 +164,16 @@ public class Question extends AppCompatActivity {
             buttonsSuggest[j].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    buttons[count].setText(buttonsSuggest[m].getText().toString());
-                    buttons[count].setTag(String.valueOf(m));
-                    buttonsSuggest[m].setVisibility(View.INVISIBLE);
+                    for (int i = 0; i < anwser.length(); i++){
+                        if (buttons[i].getText().toString().equals("")){
+                            buttons[i].setText(buttonsSuggest[m].getText().toString());
+                            buttons[i].setTag(String.valueOf(m));
+                            buttonsSuggest[m].setVisibility(View.INVISIBLE);
+                            break;
+                        }
+                    }
+
                     checkPass();
-                    count++;
                 }
             });
 
