@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,7 +35,7 @@ public class Question extends AppCompatActivity {
     String img, anwser;
     Button[] buttons;
     int m;
-
+    MediaPlayer mediaPlayer;
     Button[] buttonsSuggest;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
@@ -58,6 +59,7 @@ public class Question extends AppCompatActivity {
                 showAnwserSuggest();
             }
         });
+
     }
 
     public void showLevelScore() {
@@ -160,10 +162,11 @@ public class Question extends AppCompatActivity {
             buttonsSuggest[j].setText(String.valueOf(chars.get(j)));
             buttonsSuggest[j].setTextColor(Color.parseColor("#ffffff"));
             buttonsSuggest[j].setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_suggest));
-
             buttonsSuggest[j].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    mediaPlayer = MediaPlayer.create(Question.this, R.raw.click);
+                    mediaPlayer.start();
                     for (int i = 0; i < anwser.length(); i++){
                         if (buttons[i].getText().toString().equals("")){
                             buttons[i].setText(buttonsSuggest[m].getText().toString());
@@ -188,7 +191,9 @@ public class Question extends AppCompatActivity {
             result += buttons[i].getText();
         }
         String anwserCat = anwser.replaceAll("\\s+", "");
+//        MediaPlayer mediaWin = MediaPlayer.create(Question.this, R.raw.clab);
         if (result.equals(anwserCat)) {
+//            mediaWin.start();
             new AlertDialog.Builder(this)
                     .setTitle("Notification")
                     .setMessage("Correct")
