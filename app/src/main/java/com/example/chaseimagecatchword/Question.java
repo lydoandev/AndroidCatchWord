@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -32,11 +33,15 @@ public class Question extends AppCompatActivity {
     ArrayList<itemQuestion> list = questions.listQuestion;
     int score = 0;
     int sttBtn;
-    String img, anwser;
+    String img, anwser, anwserCat;
     Button[] buttons;
     int m;
-    MediaPlayer mediaPlayer;
+    MediaPlayer mediaPlayer, mediaWin;
     Button[] buttonsSuggest;
+    TextView txtTime;
+    CountDownTimer countDownTimer;
+
+    int timeOut = 0;
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
@@ -49,6 +54,8 @@ public class Question extends AppCompatActivity {
         showAnwserKey();
 
         showAnwserSuggest();
+
+        anwserCat = anwser.replaceAll("\\s+", "");
 
         Button btnPlayAgain = findViewById(R.id.btnPlayAgain);
         btnPlayAgain.setOnClickListener(new View.OnClickListener() {
@@ -80,6 +87,20 @@ public class Question extends AppCompatActivity {
         int imageResource = getResources().getIdentifier(img, null, getPackageName());
         Drawable res = getResources().getDrawable(imageResource);
         imgView.setImageDrawable(res);
+        txtTime = findViewById(R.id.txtTime);
+        txtTime.setText("");
+        countDownTimer = new CountDownTimer(30000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                txtTime.setText("Time: " + millisUntilFinished / 1000);
+            }
+
+            public void onFinish() {
+                timeOut = 1;
+                checkPass();
+                txtTime.setText("Oh No!");
+            }
+        }.start();
     }
 
     public void showAnwserKey() {
@@ -169,14 +190,19 @@ public class Question extends AppCompatActivity {
                     mediaPlayer.start();
                     for (int i = 0; i < anwser.length(); i++){
                         if (buttons[i].getText().toString().equals("")){
+                            if (i == anwserCat.length() - 1){
+                                checkPass();
+                            }
+
                             buttons[i].setText(buttonsSuggest[m].getText().toString());
                             buttons[i].setTag(String.valueOf(m));
                             buttonsSuggest[m].setVisibility(View.INVISIBLE);
                             break;
                         }
+                        Log.i("NU", "An "+anwserCat.length());
                     }
 
-                    checkPass();
+
                 }
             });
 
@@ -190,10 +216,20 @@ public class Question extends AppCompatActivity {
         for (int i = 0; i < anwser.length(); i++) {
             result += buttons[i].getText();
         }
-        String anwserCat = anwser.replaceAll("\\s+", "");
-//        MediaPlayer mediaWin = MediaPlayer.create(Question.this, R.raw.clab);
+
+        mediaWin = MediaPlayer.create(Question.this, R.raw.click);
+        if (timeOut == 1){
+            new AlertDialog.Builder(this)
+                    .setTitle("Notification")
+                    .setMessage("Timeout")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    }).show();
+        }
         if (result.equals(anwserCat)) {
-//            mediaWin.start();
+            mediaWin.start();
             new AlertDialog.Builder(this)
                     .setTitle("Notification")
                     .setMessage("Correct")
@@ -203,6 +239,8 @@ public class Question extends AppCompatActivity {
                             numberOfQuestion++;
                             score += 10;
                             showLevelScore();
+                            countDownTimer.cancel();
+                            timeOut = 0;
                             showImage();
                             showAnwserKey();
                             showAnwserSuggest();
