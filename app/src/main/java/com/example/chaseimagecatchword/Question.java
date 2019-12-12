@@ -225,10 +225,10 @@ public class Question extends AppCompatActivity {
         if (result.equals(anwser)) {
             mediaWin.start();
 //            final Animation animShake = AnimationUtils.loadAnimation(this, R.anim.shake);
-//            for (int i = 0; i< anwser.length(); i++){
+            for (int i = 0; i< anwser.length(); i++){
 //                buttons[i].setAnimation(animShake);
-//                buttons[i].setBackgroundColor(R.drawable.boder_radius2);
-//            }
+                buttons[i].setBackgroundDrawable(getResources().getDrawable(R.drawable.boder_radius2));
+            }
 //            new android.os.Handler().postDelayed(
 //                    new Runnable() {
 //                        public void run() {
