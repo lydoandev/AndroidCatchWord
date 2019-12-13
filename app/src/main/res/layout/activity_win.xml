@@ -3,18 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/background4"
-    tools:context=".GameOver">
+    android:layout_height="match_parent"
+    tools:context=".Win">
     <TextView
         android:id="@+id/txtScore"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
         android:layout_marginBottom="40dp"
-        android:text="TIME'S UP"
         android:textSize="60sp"
+        android:textStyle="bold"
         android:textAlignment="center"
         android:textColor="#fff">
 
@@ -22,25 +22,13 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="GAME OVER"
+        android:text="YOU WIN"
         android:layout_marginTop="40dp"
         android:layout_marginBottom="40dp"
         android:textSize="60sp"
+        android:textStyle="bold"
         android:textAlignment="center"
         android:textColor="#fff">
 
     </TextView>
-    <Button
-        android:id="@+id/btnPlayAgain"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="PLAY AGAIN"
-        android:layout_marginTop="40dp"
-        android:layout_marginBottom="40dp"
-        android:textSize="60sp"
-        android:textAlignment="center"
-        android:background="@drawable/border_radius"
-        android:textColor="#fff">
-
-    </Button>
 </LinearLayout>

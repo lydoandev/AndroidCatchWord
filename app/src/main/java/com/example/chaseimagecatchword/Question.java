@@ -6,12 +6,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -105,11 +107,11 @@ public class Question extends AppCompatActivity {
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.layoutAnwser);
         linearLayout.removeAllViews();
         for (int i = 0; i < arrAnwser.length; i++) {
-
             for (int j = 0; j < arrAnwser[i].length(); j++) {
                 final int temp = sttBtn;
                 buttons[temp] = new Button(this);
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(110, 110);
+                int width = (getScreenWidth() - (8 - 1) * 15) / 8;
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, width);
                 buttons[temp].setLayoutParams(params);
                 buttons[temp].setTextColor(Color.parseColor("#ffffff"));
                 buttons[temp].setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_anwser));
@@ -164,10 +166,10 @@ public class Question extends AppCompatActivity {
         Log.i("Char size", String.valueOf(chars.size()));
 
         for (int j = 0; j < chars.size(); j++) {
-
             final int m = j;
             buttonsSuggest[j] = new Button(this);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(110, 110);
+            int width = (getScreenWidth() - (8 - 1) * 15) / 8;
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(width, width);
             buttonsSuggest[j].setLayoutParams(params);
             buttonsSuggest[j].setText(String.valueOf(chars.get(j)));
             buttonsSuggest[j].setTextColor(Color.parseColor("#ffffff"));
@@ -205,7 +207,8 @@ public class Question extends AppCompatActivity {
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(Question.this, GameOver.class );
+                            Intent intent = new Intent(Question.this, GameOver.class);
+                            intent.putExtra("Score", String.valueOf(score));
                             startActivity(intent);
                         }
                     }).show();
@@ -219,58 +222,59 @@ public class Question extends AppCompatActivity {
             result += buttons[i].getText();
         }
         Log.i("Result", "" + result);
-        MediaPlayer mediaWin = MediaPlayer.create(Question.this, R.raw.click);
+        MediaPlayer mediaWin = MediaPlayer.create(Question.this, R.raw.clab);
         checkTimeOut();
 
         if (result.equals(anwser)) {
             mediaWin.start();
-//            final Animation animShake = AnimationUtils.loadAnimation(this, R.anim.shake);
-            for (int i = 0; i< anwser.length(); i++){
-//                buttons[i].setAnimation(animShake);
+            final Animation animShake = AnimationUtils.loadAnimation(this, R.anim.shake);
+            for (int i = 0; i < anwser.length(); i++) {
+                buttons[i].startAnimation(animShake);
                 buttons[i].setBackgroundDrawable(getResources().getDrawable(R.drawable.boder_radius2));
             }
-//            new android.os.Handler().postDelayed(
-//                    new Runnable() {
-//                        public void run() {
-                            new AlertDialog.Builder(Question.this)
-                                    .setTitle("Notification")
-                                    .setMessage("Correct")
-                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            numberOfQuestion++;
-                                            score += 10;
-                                            showLevelScore();
-                                            countDownTimer.cancel();
-                                            timeOut = 0;
-                                            showImage();
-                                            showAnwserKey();
-                                            showAnwserSuggest();
-                                        }
-                                    }).show();
-//                        }
-//                    },
-//                    3000);
-
-        }else{
+            new Handler().postDelayed(new Runnable() {
+                public void run() {
+                    openNextQuestion();
+                }
+            }, 2500);
+        } else {
+            MediaPlayer mediaFail = MediaPlayer.create(Question.this, R.raw.fail);
+            mediaFail.start();
             final Animation animShake = AnimationUtils.loadAnimation(this, R.anim.shake);
-            for (int i = 0; i< anwser.length(); i++){
-                buttons[i].setAnimation(animShake);
+            for (int i = 0; i < anwser.length(); i++) {
+                buttons[i].startAnimation(animShake);
                 buttons[i].setBackgroundDrawable(getResources().getDrawable(R.drawable.border_radius3));
             }
-            new AlertDialog.Builder(Question.this)
-                    .setTitle("Notification")
-                    .setMessage("InCorrect")
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            for (int i = 0; i< anwser.length(); i++){
-                                buttons[i].setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_anwser));
-                            }
-                        }
-                    }).show();
+            new Handler().postDelayed(new Runnable() {
+                public void run() {
+                    for (int i = 0; i < anwser.length(); i++) {
+                        buttons[i].setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_anwser));
+                    }
+                }
+            }, 2500);
         }
     }
 
+    private void openNextQuestion() {
+        if(numberOfQuestion <= 9){
+            numberOfQuestion++;
+            score += 10;
+            showLevelScore();
+            countDownTimer.cancel();
+            timeOut = 0;
+            showImage();
+            showAnwserKey();
+            showAnwserSuggest();
+        }else {
+            Intent intent = new Intent(Question.this, Win.class);
+            intent.putExtra("Score", score);
+            startActivity(intent);
+        }
+
+    }
+
+    public static int getScreenWidth() {
+        return Resources.getSystem().getDisplayMetrics().widthPixels;
+    }
 
 }
